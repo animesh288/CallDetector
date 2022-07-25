@@ -1,26 +1,17 @@
 package com.android.calldetector;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.content.Intent;
-import android.os.PowerManager;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,10 +41,16 @@ public class MainActivity extends AppCompatActivity {
                 url=spreadSheet.getText().toString();
                 editText.setText("");
                 spreadSheet.setText("");
+                SharedPreferences sh=getSharedPreferences("MyPref",MODE_PRIVATE);
+                SharedPreferences.Editor editor=sh.edit();
+
+                editor.putString("url",url);
+                editor.putString("name",name);
+                editor.apply();
+
                 current.setText("Current Url : "+url+"\n\nCurrent sheet : "+name);
             }
         });
-        current.setText("Current sheet : "+name);
 
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static MainActivity getInstance(){
+    public static Context getInstance(){
         return instance;
     }
 
@@ -83,4 +80,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences sh=getSharedPreferences("MyPref",MODE_PRIVATE);
+        name=sh.getString("name","");
+        url=sh.getString("url","");
+
+        current.setText("Current Url : "+url+"\n\nCurrent sheet : "+name);
+
+    }
+
 }
